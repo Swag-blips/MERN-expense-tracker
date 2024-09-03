@@ -4,20 +4,38 @@ import viteLogo from "/vite.svg";
 import "./App.css";
 
 function App() {
-  const [count, setCount] = useState(0);
+  const [name, setName] = useState("");
+  const [dateTime, setDateTime] = useState("");
+  const [description, setDescription] = useState("");
+
+  const addNewTransaction = () => {};
 
   return (
     <main>
       <h1>
         $400<span>.00</span>
       </h1>
-      <form>
+      <form onSubmit={addNewTransaction}>
         <div className="basic">
-          <input type="text" placeholder="+200 nwe samsung tv" />
-          <input type="datetime-local" />
+          <input
+            type="text"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            placeholder="+200 nwe samsung tv"
+          />
+          <input
+            value={dateTime}
+            onChange={(e) => setDateTime(e.target.value)}
+            type="datetime-local"
+          />
         </div>
         <div className="description">
-          <input type="text" placeholder={"description"} />
+          <input
+            type="text"
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            placeholder={"description"}
+          />
         </div>
         <button type="submit">Add New transaction</button>
 
