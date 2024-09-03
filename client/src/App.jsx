@@ -1,6 +1,5 @@
 import { useState } from "react";
-import reactLogo from "./assets/react.svg";
-import viteLogo from "/vite.svg";
+
 import "./App.css";
 
 function App() {
@@ -11,17 +10,26 @@ function App() {
   const addNewTransaction = async (e) => {
     e.preventDefault();
     const url = `${import.meta.env.VITE_API_ROUTE}/transaction`;
+    const price = name.split(" ")[0];
     try {
       const response = await fetch(url, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ name, dateTime, description }),
+        body: JSON.stringify({
+          price,
+          name: name.substring(price.length + 1),
+          dateTime,
+          description,
+        }),
       });
 
       const data = await response.json();
       console.log(data);
+      setName("");
+      setDateTime("");
+      setDescription("");
     } catch (error) {
       console.error(error);
     }
