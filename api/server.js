@@ -25,6 +25,10 @@ app.post("/transaction", async (req, res) => {
   res.json(transaction);
 });
 
+app.get("/api/transactions", async(req,res) => {
+    
+})
+
 app.listen(3000, () => {
   console.log("app listening on port 3000");
 });
