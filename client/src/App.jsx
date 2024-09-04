@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import "./App.css";
 
@@ -6,13 +6,31 @@ function App() {
   const [name, setName] = useState("");
   const [dateTime, setDateTime] = useState("");
   const [description, setDescription] = useState("");
+  const [transactions, setTransactions] = useState([]);
+  const url = `${import.meta.env.VITE_API_ROUTE}`;
+
+  useEffect(() => {
+    getTransactions();
+  }, []);
+
+  const getTransactions = async () => {
+    try {
+      let response = await fetch(`${url}/api/transactions`);
+      let data = await response.json();
+      setTransactions(data);
+      console.log(data);
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   const addNewTransaction = async (e) => {
     e.preventDefault();
-    const url = `${import.meta.env.VITE_API_ROUTE}/transaction`;
+
     const price = name.split(" ")[0];
+
     try {
-      const response = await fetch(url, {
+      const response = await fetch(`${url}/transaction`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -35,10 +53,19 @@ function App() {
     }
   };
 
+  let balance = 0;
+
+  for (const transaction of transactions) {
+    balance = balance + transaction.price;
+  }
+  balance = balance.toFixed(2);
+  const fraction = balance.split(".")[1];
+  balance = balance.split(".")[0];
   return (
     <main>
       <h1>
-        $400<span>.00</span>
+        ${balance}
+        <span>{fraction}</span>
       </h1>
       <form onSubmit={addNewTransaction}>
         <div className="basic">
@@ -65,36 +92,22 @@ function App() {
         <button type="submit">Add New transaction</button>
 
         <div className="transactions">
-          <div className="transaction">
-            <div className="left">
-              <div className="name">New Samsung TV</div>
-              <div className="description">it was time for new tv</div>
+          {transactions?.map((transaction) => (
+            <div key={transaction._id} className="transaction">
+              <div className="left">
+                <div className="name">{transaction.name}</div>
+                <div className="description">{transaction.description}</div>
+              </div>
+              <div className="right">
+                <div
+                  className={`price ${transaction.price < 0 ? "red" : "green"}`}
+                >
+                  {transaction.price}
+                </div>
+                <div className="datetime">2022-12-18 15.45</div>
+              </div>
             </div>
-            <div className="right">
-              <div className="price red">$500</div>
-              <div className="datetime">2022-12-18 15.45</div>
-            </div>
-          </div>
-          <div className="transaction">
-            <div className="left">
-              <div className="name">Gig job new website</div>
-              <div className="description">it was time for new tv</div>
-            </div>
-            <div className="right">
-              <div className="price green">+$400</div>
-              <div className="datetime">2022-12-18 15.45</div>
-            </div>
-          </div>
-          <div className="transaction">
-            <div className="left">
-              <div className="name">Iphone</div>
-              <div className="description">it was time for new tv</div>
-            </div>
-            <div className="right">
-              <div className="price red">-$900</div>
-              <div className="datetime">2022-12-18 15.45</div>
-            </div>
-          </div>
+          ))}
         </div>
       </form>
     </main>
